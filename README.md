@@ -13,11 +13,11 @@ A simple Python script that converts old AgriCraft data to the 1.20+ format.
 
 3. **Run the Script:**
    - Execute `updater.py`.
-   - Check in console if there are any files that were skipped.
+   - Check the console for any files that were skipped.
 
 4. **When the Script is Done:**
    - After running the script, you will find a new directory named `new` containing `datapack.zip`. 
    - `datapack.zip` can be added to the `datapacks` directory of your Minecraft world.
 
-##TODO 
+## TODO 
 1. Create a working resource pack based on the plants data
