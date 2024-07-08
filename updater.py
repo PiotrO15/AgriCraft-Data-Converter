@@ -60,7 +60,19 @@ def update_data(dirname, data, new_filename, namespace):
 def process_json_files():
     ensure_path(NEW_BASE_DIR)
     
+    namespaces = None
+
     for dirpath, dirnames, _ in os.walk(OLD_BASE_DIR):
+        if namespaces is None:
+            namespaces = dirnames
+
+            namespaces = [namespace.replace('mod_', '') for namespace in namespaces]
+
+            namespaces.remove('agricraft')
+            namespaces.remove('minecraft')
+
+            print(namespaces)
+
         dirpath = Path(dirpath)
 
         for dirname in dirnames:
@@ -91,7 +103,7 @@ def process_json_files():
 
     if Path.is_file(OLD_BASE_DIR / LANG):
         with open(OLD_BASE_DIR / LANG, 'r', encoding='utf-8') as old_lang:
-            update_lang(RESOURCEPACK_DIR / 'assets' / 'agricraft' / 'lang' / LANG, json.load(old_lang))
+            update_lang(RESOURCEPACK_DIR / 'assets' / 'agricraft' / 'lang' / LANG, json.load(old_lang), namespaces)
 
 if __name__ == '__main__':
     process_json_files()

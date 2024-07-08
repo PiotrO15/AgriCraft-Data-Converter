@@ -120,9 +120,7 @@ def update_assets(namespace, data, id):
         with open(os.path.join(crop_path, f'{id}_stage{stage}.json'), 'w', encoding='utf-8') as new_file:
             json.dump(crop_model, new_file, ensure_ascii=False, indent=2)
 
-namespaces = ['abundance', 'arcanefundamentals', 'atmospheric', 'autumnity', 'biomesoplenty', 'botania', 'buzzier_bees', 'byg', 'croptopia', 'environmental', 'farmersdelight', 'horticulture', 'immersiveengineering', 'metalbushesmod', 'mysticalagradditions', 'mysticalagriculture', 'pamhc2crops', 'paragon_textiles', 'quark', 'simplefarming', 'supplementaries', 'thermal_cultivation', 'upgrade_aquatic', 'xlfoodmod']
-
-def update_lang(path, data):
+def update_lang(path, data, namespaces):
     lang = {}
 
     for key in data:
