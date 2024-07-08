@@ -64,6 +64,19 @@ def crop_plus(crop_textures):
             }
         }
 
+def crop_mysticalagriculture(crop_textures):
+    if len(crop_textures) == 1:
+        return {
+            "parent": crop_textures[0]
+        }
+    else:
+        return {
+            "parent": crop_textures[0],
+            "textures": {
+                "flower": crop_textures[1]
+            }
+        }
+
 def update_assets(namespace, data, id):
     id = id.replace('.json', '')
 
@@ -98,6 +111,8 @@ def update_assets(namespace, data, id):
                 crop_model = crop_plus(plant_textures)
             case 'cross', _:
                 crop_model = crop_cross(plant_textures)
+            case 'mysticalagriculture', _:
+                crop_model = crop_mysticalagriculture(plant_textures)
             case _, _:
                 print(f'Skipping model {namespace}\{id}, model: {render_type}, stage: {stage}')
                 continue
@@ -105,5 +120,31 @@ def update_assets(namespace, data, id):
         with open(os.path.join(crop_path, f'{id}_stage{stage}.json'), 'w', encoding='utf-8') as new_file:
             json.dump(crop_model, new_file, ensure_ascii=False, indent=2)
 
+namespaces = ['abundance', 'arcanefundamentals', 'atmospheric', 'autumnity', 'biomesoplenty', 'botania', 'buzzier_bees', 'byg', 'croptopia', 'environmental', 'farmersdelight', 'horticulture', 'immersiveengineering', 'metalbushesmod', 'mysticalagradditions', 'mysticalagriculture', 'pamhc2crops', 'paragon_textiles', 'quark', 'simplefarming', 'supplementaries', 'thermal_cultivation', 'upgrade_aquatic', 'xlfoodmod']
 
+def update_lang(path, data):
+    lang = {}
 
+    for key in data:
+        for namespace in namespaces:
+            if namespace in key and key.startswith('agricraft.plant.'):
+                split_key = key.split('.')
+
+                match split_key[-1]:
+                    case 'seed':
+                        id = split_key[-2].replace(f'{namespace}_', '')
+                        lang[f'seed.agricraft.{namespace}.{id}'] = data[key]
+                    case 'desc':
+                        id = split_key[-2].replace(f'{namespace}_', '')
+                        lang[f'description.agricraft.{namespace}.{id}'] = data[key]
+                    case 'name':
+                        id = split_key[-2].replace(f'{namespace}_', '')
+                        lang[f'plant.agricraft.{namespace}.{id}'] = data[key]
+                    case _:
+                        id = split_key[-1].replace(f'{namespace}_', '')
+                        lang[f'seed.agricraft.{namespace}.{id}'] = data[key]
+
+    ensure_path(path.parent)
+    
+    with open(path, 'w', encoding='utf-8') as lang_file:
+        json.dump(lang, lang_file, ensure_ascii=False, indent=2)

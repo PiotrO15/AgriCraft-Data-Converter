@@ -9,7 +9,7 @@ from mutations_updater import update_mutation
 from plants_updater import update_plant
 from soils_updater import update_soil
 from fertilizers_updater import update_fertilizer
-from assets_updater import update_assets
+from assets_updater import update_assets, update_lang
 
 # Constants
 DATAPACK_DESCRIPTION = "Custom AgriCraft plants"
@@ -20,6 +20,7 @@ NEW_BASE_DIR = Path('new')
 OLD_BASE_DIR = Path('old')
 DATAPACK_DIR = NEW_BASE_DIR / 'datapack'
 RESOURCEPACK_DIR = NEW_BASE_DIR / 'resourcepack'
+LANG = 'en_us.json'
 
 def add_mcmeta(path, pack_description, pack_format):
     pack = {
@@ -86,7 +87,11 @@ def process_json_files():
                         with open(new_file_path, 'w', encoding='utf-8') as new_json:
                             json.dump(data, new_json, ensure_ascii=False, indent=2)
                     else:
-                        print(f'Skipping file {dirpath}\{dirname}\{filename}')
+                        print(f'Skipping file {dirpath}\{dirname}\{filename}: directory name {dirname} is wrong or unsupported.')
+
+    if Path.is_file(OLD_BASE_DIR / LANG):
+        with open(OLD_BASE_DIR / LANG, 'r', encoding='utf-8') as old_lang:
+            update_lang(RESOURCEPACK_DIR / 'assets' / 'agricraft' / 'lang' / LANG, json.load(old_lang))
 
 if __name__ == '__main__':
     process_json_files()
@@ -94,3 +99,4 @@ if __name__ == '__main__':
     shutil.make_archive(str(DATAPACK_DIR), 'zip', str(DATAPACK_DIR))
 
     add_mcmeta(RESOURCEPACK_DIR / 'pack.mcmeta', RESOURCEPACK_DESCRIPTION, RESOURCEPACK_FORMAT)
+    shutil.make_archive(str(RESOURCEPACK_DIR), 'zip', str(RESOURCEPACK_DIR))
