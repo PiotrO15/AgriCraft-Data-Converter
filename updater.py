@@ -3,6 +3,8 @@ import json
 import shutil
 from pathlib import Path
 
+from utils import ensure_path
+
 from mutations_updater import update_mutation
 from plants_updater import update_plant
 from soils_updater import update_soil
@@ -12,13 +14,12 @@ from assets_updater import update_assets
 # Constants
 DATAPACK_DESCRIPTION = "Custom AgriCraft plants"
 DATAPACK_FORMAT = 15
+RESOURCEPACK_DESCRIPTION = DATAPACK_DESCRIPTION
+RESOURCEPACK_FORMAT = 15
 NEW_BASE_DIR = Path('new')
 OLD_BASE_DIR = Path('old')
 DATAPACK_DIR = NEW_BASE_DIR / 'datapack'
 RESOURCEPACK_DIR = NEW_BASE_DIR / 'resourcepack'
-
-def ensure_path(path):
-    path.mkdir(parents=True, exist_ok=True)
 
 def add_mcmeta(path, pack_description, pack_format):
     pack = {
@@ -33,14 +34,14 @@ def add_mcmeta(path, pack_description, pack_format):
     with open(path, 'w', encoding='utf-8') as mcmeta_file:
         json.dump(pack, mcmeta_file, ensure_ascii=False, indent=2)
 
-def update_data(dirname, data, new_filename, sub_new_path):
+def update_data(dirname, data, new_filename, namespace):
     match dirname:
         case 'mutations':
             data = update_mutation(data)
             new_filename = new_filename.replace('_mutation', '')
         case 'plants':
             new_filename = new_filename.replace('_plant', '')
-            # update_assets(sub_new_path.replace(OLD_BASE_DIR, NEW_BASE_DIR + 'assets/'), data, new_filename)
+            update_assets(RESOURCEPACK_DIR / 'assets' / namespace, data, new_filename)
             data = update_plant(data)
         case 'soils':
             new_filename = new_filename.replace('_soil', '')
@@ -77,7 +78,7 @@ def process_json_files():
                     with open(old_file_path, 'r', encoding='utf-8') as old_json:
                         data = json.load(old_json)
 
-                    data, new_filename = update_data(dirname, data, filename, dirpath)
+                    data, new_filename = update_data(dirname, data, filename, dirpath.name.replace('mod_', ''))
                     
                     if data is not None:
                         new_file_path = sub_new_path / new_filename
@@ -91,3 +92,5 @@ if __name__ == '__main__':
     process_json_files()
     add_mcmeta(DATAPACK_DIR / 'pack.mcmeta', DATAPACK_DESCRIPTION, DATAPACK_FORMAT)
     shutil.make_archive(str(DATAPACK_DIR), 'zip', str(DATAPACK_DIR))
+
+    add_mcmeta(RESOURCEPACK_DIR / 'pack.mcmeta', RESOURCEPACK_DESCRIPTION, RESOURCEPACK_FORMAT)
