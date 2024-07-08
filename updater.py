@@ -10,29 +10,28 @@ from fertilizers_updater import update_fertilizer
 from assets_updater import update_assets
 
 # Constants
-PACK_DESCRIPTION = "Custom AgriCraft plants"
-PACK_FORMAT = 15
+DATAPACK_DESCRIPTION = "Custom AgriCraft plants"
+DATAPACK_FORMAT = 15
 NEW_BASE_DIR = Path('new')
 OLD_BASE_DIR = Path('old')
 DATAPACK_DIR = NEW_BASE_DIR / 'datapack'
-ASSETS_DIR = NEW_BASE_DIR / 'assets'
+RESOURCEPACK_DIR = NEW_BASE_DIR / 'resourcepack'
 
 def ensure_path(path):
     path.mkdir(parents=True, exist_ok=True)
 
-def add_datapack_mcmeta():
+def add_mcmeta(path, pack_description, pack_format):
     pack = {
         "pack": {
-        "description": PACK_DESCRIPTION,
-        "pack_format": PACK_FORMAT
+        "description": pack_description,
+        "pack_format": pack_format
         }
     }
 
-    pack_path = Path('new/datapack/pack.mcmeta')
-    ensure_path(pack_path.parent)
+    ensure_path(path.parent)
 
-    with open(pack_path, 'w', encoding='utf-8') as pack_mcmeta:
-        json.dump(pack, pack_mcmeta, ensure_ascii=False, indent=2)
+    with open(path, 'w', encoding='utf-8') as mcmeta_file:
+        json.dump(pack, mcmeta_file, ensure_ascii=False, indent=2)
 
 def update_data(dirname, data, new_filename, sub_new_path):
     match dirname:
@@ -90,5 +89,5 @@ def process_json_files():
 
 if __name__ == '__main__':
     process_json_files()
-    add_datapack_mcmeta()
+    add_mcmeta(DATAPACK_DIR / 'pack.mcmeta', DATAPACK_DESCRIPTION, DATAPACK_FORMAT)
     shutil.make_archive(str(DATAPACK_DIR), 'zip', str(DATAPACK_DIR))
