@@ -44,6 +44,9 @@ def update_data(dirname, data, new_filename, namespace):
             new_filename = new_filename.replace('_plant', '')
             update_assets(RESOURCEPACK_DIR / 'assets' / namespace, data, new_filename)
             data = update_plant(data)
+        case 'soil':
+            new_filename = new_filename.replace('_soil', '')
+            data = update_soil(data)
         case 'soils':
             new_filename = new_filename.replace('_soil', '')
             data = update_soil(data)
@@ -68,8 +71,9 @@ def process_json_files():
 
             namespaces = [namespace.replace('mod_', '') for namespace in namespaces]
 
-            namespaces.remove('agricraft')
-            namespaces.remove('minecraft')
+            exclusions = {'agricraft', 'minecraft'}
+
+            namespaces[:] = [x for x in namespaces if x not in exclusions]
 
             print(namespaces)
 
@@ -99,7 +103,7 @@ def process_json_files():
                         with open(new_file_path, 'w', encoding='utf-8') as new_json:
                             json.dump(data, new_json, ensure_ascii=False, indent=2)
                     else:
-                        print(f'Skipping file {dirpath}\{dirname}\{filename}: directory name {dirname} is wrong or unsupported.')
+                        print(f'Skipping file {dirpath}\\{dirname}\\{filename}: directory name {dirname} is wrong or unsupported.')
 
     if Path.is_file(OLD_BASE_DIR / LANG):
         with open(OLD_BASE_DIR / LANG, 'r', encoding='utf-8') as old_lang:
