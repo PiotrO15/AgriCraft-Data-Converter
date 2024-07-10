@@ -44,9 +44,6 @@ def update_data(dirname, data, new_filename, namespace):
             new_filename = new_filename.replace('_plant', '')
             update_assets(RESOURCEPACK_DIR / 'assets' / namespace, data, new_filename)
             data = update_plant(data)
-        case 'soil':
-            new_filename = new_filename.replace('_soil', '')
-            data = update_soil(data)
         case 'soils':
             new_filename = new_filename.replace('_soil', '')
             data = update_soil(data)
